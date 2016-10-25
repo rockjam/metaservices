@@ -9,4 +9,5 @@ object Version {
 
 object Library {
   val scalaTest = "org.scalatest" %% "scalatest" % Version.ScalaTest
+  val scalameta = "org.scalameta" %% "scalameta" % "1.1.0"
 }
