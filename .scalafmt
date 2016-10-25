@@ -1,3 +1,6 @@
---style defaultWithAlign
---spacesInImportCurlyBraces true
---danglingParentheses true
+style: defaultWithAlign
+danglingParentheses: true
+
+spaces {
+  inImportCurlyBraces: true
+}

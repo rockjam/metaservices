@@ -17,21 +17,48 @@
 package com.github.rockjam.trymeta
 
 import scala.meta._
-
 import scala.annotation.StaticAnnotation
 
 class listreq extends StaticAnnotation {
 
   inline def apply(defn: Any): Any = meta {
-    val q"object $name { ..${stats: scala.collection.immutable.Seq[Stat]} }" = defn
+    val q"object $name { ..${stats: Seq[Stat]} }" = defn
 
     val requests = stats collect {
-      case c: Defn.Class => c.name.toString()
-    } mkString("\"", " ", "\"")
+      case c: Defn.Class => c
+    }
 
-    val expr = q"""val allRequests: String =  $requests"""
+    val jsonFormatters = {
+      val importCirce = q"import io.circe._, io.circe.generic.semiauto._"
 
-    q"object $name { ..$stats; $expr }"
+      val encodersDecoders = requests flatMap { req =>
+        val reqName = req.name.value
+        val nameLowerized = reqName.headOption map (_.toLower + reqName.tail) getOrElse reqName
+        val encoderName = Pat.Var.Term(Term.Name(s"${nameLowerized}Encoder"))
+        val decoderName = Pat.Var.Term(Term.Name(s"${nameLowerized}Decoder"))
+        val typeName = Type.Name(reqName)
+
+        Seq(
+          q"implicit val $encoderName: Encoder[$typeName] = deriveEncoder[$typeName]",
+          q"implicit val $decoderName: Decoder[$typeName] = deriveDecoder[$typeName]"
+        )
+      }
+      q"object JsonFormatters { $importCirce; ..$encodersDecoders }"
+    }
+
+    val allRequests = {
+      val elems = requests map (e => "\"" + e.name.value + "\"") mkString ", "
+      q"""val allRequests: List[String] =  List($elems)"""
+    }
+
+    val allShit = {
+      val elems = stats map (_.toString()) mkString("\"", " ", "\"")
+      q"val allShit: String = $elems"
+    }
+
+    val result = q"object $name { ..$stats; $allRequests; $allShit; $jsonFormatters }"
+    println(s"===result: ${result}")
+    result
   }
 
 }

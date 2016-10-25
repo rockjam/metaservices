@@ -14,32 +14,12 @@
  * limitations under the License.
  */
 
-package com.github.rockjam.trymeta
+package com.github.rockjam
 
-@listreq
-object Requests {
+package object trymeta {
 
-  sealed trait Request
-
-  case class GetName(id: Int) extends Request
-
-  case class SetName(id: Int, name: String) extends Request
-
-}
-
-object Test extends App {
-
-  println(s"========== all requests are: ${Requests.allRequests}")
-  println(s"========== all shit is: ${Requests.allShit}")
-
-  import Requests._
-  import JsonFormatters._
-
-  import io.circe._, io.circe.syntax._, io.circe.parser
-  val there = GetName(22).asJson.noSpaces
-  println(s"======there: ${there}")
-
-  val back = parser.parse(there)
-  println(s"======back: ${back}")
-
+  type Traversable[+A] = scala.collection.immutable.Traversable[A]
+  type Iterable[+A]    = scala.collection.immutable.Iterable[A]
+  type Seq[+A]         = scala.collection.immutable.Seq[A]
+  type IndexedSeq[+A]  = scala.collection.immutable.IndexedSeq[A]
 }

@@ -6,13 +6,12 @@ lazy val `try-meta` = project
   .in(file("."))
   .enablePlugins(AutomateHeaderPlugin, GitVersioning)
   .settings(metaSettigns)
+  .settings(libraryDependencies ++= Dependencies.tryMeta)
   .dependsOn(annotations)
 
 lazy val annotations = project
   .enablePlugins(AutomateHeaderPlugin, GitVersioning)
-  .settings(
-    libraryDependencies += Library.scalameta
-  )
+  .settings(libraryDependencies ++= Dependencies.annotations)
   .settings(metaSettigns)
 
 libraryDependencies ++= Vector(
