@@ -22,43 +22,77 @@ import scala.annotation.StaticAnnotation
 class listreq extends StaticAnnotation {
 
   inline def apply(defn: Any): Any = meta {
-    val q"object $name { ..${stats: Seq[Stat]} }" = defn
+    def lowerize(s: String) = s.headOption map (_.toLower + s.tail) getOrElse s
 
-    val requests = stats collect {
-      case c: Defn.Class => c
-    }
+    def aux(defn: Tree) = {
+      val q"object $name { ..${stats: Seq[Stat]} }" = defn
 
-    val jsonFormatters = {
-      val importCirce = q"import io.circe._, io.circe.generic.semiauto._"
+      val jsonFormatters = {
+        val reqNames: Seq[String] = stats collect {
+          case c: Defn.Class => c.name.value
+        }
 
-      val encodersDecoders = requests flatMap { req =>
-        val reqName = req.name.value
-        val nameLowerized = reqName.headOption map (_.toLower + reqName.tail) getOrElse reqName
-        val encoderName = Pat.Var.Term(Term.Name(s"${nameLowerized}Encoder"))
-        val decoderName = Pat.Var.Term(Term.Name(s"${nameLowerized}Decoder"))
-        val typeName = Type.Name(reqName)
+        val importCirce = q"import io.circe._, io.circe.syntax._, io.circe.generic.semiauto._, io.circe.Decoder.Result"
+        val importCats = q"import cats.data.Xor"
 
-        Seq(
-          q"implicit val $encoderName: Encoder[$typeName] = deriveEncoder[$typeName]",
-          q"implicit val $decoderName: Decoder[$typeName] = deriveDecoder[$typeName]"
-        )
+        val encoders = reqNames map { reqName =>
+          val nameLowerized = lowerize(reqName)
+          val encoderName = Pat.Var.Term(Term.Name(s"${nameLowerized}Encoder"))
+          val typeName = Type.Name(reqName)
+
+          q"""
+          implicit val $encoderName: Encoder[$typeName] = new Encoder[$typeName] {
+            def apply(a: $typeName): Json =
+              JsonObject.fromMap(Map(
+                "method" -> Json.fromString($nameLowerized),
+                "params" -> a.asJson(deriveEncoder[$typeName])
+              )).asJson
+          }
+        """
+        }
+
+        val decoder = {
+
+          val baseTraits = stats collect {
+            case t: Defn.Trait => t.name.value
+          }
+          require(baseTraits.length == 1, "There should be only one base trait for requests")
+
+          val cases = (reqNames map { name =>
+            val typeName = Type.Name(name)
+            val nameLowerized = lowerize(name)
+
+            p"""case Xor.Right($nameLowerized) => c.downField("params").as[$typeName](deriveDecoder[$typeName])"""
+          }) :+ p"""case _ => Xor.Left(DecodingFailure("method is not present", c.downField("method").history))"""
+
+          val (decoderName, baseType) = {
+            val requestBaseName = baseTraits.head
+            val nameLowerized = lowerize(requestBaseName)
+            Pat.Var.Term(Term.Name(nameLowerized)) -> Type.Name(requestBaseName)
+          }
+
+          q"""
+            implicit val $decoderName: Decoder[$baseType] = new Decoder[$baseType] {
+              def apply(c: HCursor): Result[$baseType] = {
+               c.downField("method").as[String] match {
+                 ..case$cases
+               }
+              }
+            }
+          """
+        }
+
+        q"object JsonFormatters { $importCirce; $importCats; ..$encoders; $decoder }"
       }
-      q"object JsonFormatters { $importCirce; ..$encodersDecoders }"
+
+      val result = q"object $name { ..$stats; $jsonFormatters }"
+//      println(s"\n $result \n")
+      result
     }
 
-    val allRequests = {
-      val elems = requests map (e => "\"" + e.name.value + "\"") mkString ", "
-      q"""val allRequests: List[String] =  List($elems)"""
-    }
-
-    val allShit = {
-      val elems = stats map (_.toString()) mkString("\"", " ", "\"")
-      q"val allShit: String = $elems"
-    }
-
-    val result = q"object $name { ..$stats; $allRequests; $allShit; $jsonFormatters }"
-    println(s"===result: ${result}")
-    result
+    aux(defn)
   }
+
+
 
 }

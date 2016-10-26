@@ -25,21 +25,29 @@ object Requests {
 
   case class SetName(id: Int, name: String) extends Request
 
+  case class FindUser(query: String) extends Request
+
 }
 
-object Test extends App {
-
-  println(s"========== all requests are: ${Requests.allRequests}")
-  println(s"========== all shit is: ${Requests.allShit}")
+object Main extends App {
 
   import Requests._
   import JsonFormatters._
 
-  import io.circe._, io.circe.syntax._, io.circe.parser
-  val there = GetName(22).asJson.noSpaces
-  println(s"======there: ${there}")
+  import io.circe._
+  import io.circe.syntax._
+  import io.circe.parser
 
-  val back = parser.parse(there)
-  println(s"======back: ${back}")
+  val initial = GetName(22)
+  println(s"======initial: $initial")
+
+  val there = initial.asJson.noSpaces
+  println(s"======there: $there")
+
+  val back =
+    parser.decode[Request](there).getOrElse(sys.error("Failed to decode"))
+  println(s"======back: $back")
+
+  assert(initial == back)
 
 }
