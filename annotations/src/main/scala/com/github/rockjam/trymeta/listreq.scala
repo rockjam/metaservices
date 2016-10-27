@@ -19,13 +19,15 @@ package com.github.rockjam.trymeta
 import scala.meta._
 import scala.annotation.StaticAnnotation
 
+// maybe we should put implicits right inside of object
 class listreq extends StaticAnnotation {
 
   inline def apply(defn: Any): Any = meta {
+    println("============ in listreq")
     def lowerize(s: String) = s.headOption map (_.toLower + s.tail) getOrElse s
 
     def aux(defn: Tree) = {
-      val q"object $name { ..${stats: Seq[Stat]} }" = defn
+      val q"..$mods object $name { ..${stats: Seq[Stat]} }" = defn
 
       val jsonFormatters = {
         val reqNames: Seq[String] = stats collect {
@@ -85,8 +87,8 @@ class listreq extends StaticAnnotation {
         q"object JsonFormatters { $importCirce; $importCats; ..$encoders; $decoder }"
       }
 
-      val result = q"object $name { ..$stats; $jsonFormatters }"
-//      println(s"\n $result \n")
+      val result = q"..$mods object $name { ..$stats; $jsonFormatters }"
+      println(s"\n $result \n")
       result
     }
 

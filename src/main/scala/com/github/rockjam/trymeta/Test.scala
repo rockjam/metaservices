@@ -17,7 +17,8 @@
 package com.github.rockjam.trymeta
 
 @listreq
-object Requests {
+@service
+object Users {
 
   sealed trait Request
 
@@ -29,9 +30,48 @@ object Requests {
 
 }
 
+//// single endpoint, everything encoded inside json
+//object Foo {
+//
+//  // приходит строка
+//  """
+//    |{
+//    |   "id": "1" // что делать с id?
+//    |   "method": "getName"
+//    |   "params": {
+//    |     "id": "22"
+//    |   }
+//    |}
+//  """.stripMargin
+//
+//  // что нужно сделать с этой строкой?
+//  // * получить метод
+//  // * распарсить что внутри params в GetName
+//  // * если получилось распарсить, то вызвать метод  handleGetName
+//}
+
+//object HttpHandler {
+//  import Users.JsonFormatters._ //???wtf??? why should I do it?
+//
+//  val usersService = new UsersServiceImpl()
+//
+//  def endpoint: Endpoint[???] = post(???) { e =>
+//    usersService.handle(e)
+//  }
+//
+//  Http.server.serve(":8080", endpoint.toServiceAs[???])
+//
+//}
+
 object Main extends App {
 
-  import Requests._
+  class UsersServiceImpl extends Users.UsersService {
+    def handleFindUser(query: String): Unit        = ???
+    def handleGetName(id: Int): Unit               = ???
+    def handleSetName(id: Int, name: String): Unit = ???
+  }
+
+  import Users._
   import JsonFormatters._
 
   import io.circe._
