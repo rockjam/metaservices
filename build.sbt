@@ -1,5 +1,5 @@
 lazy val metaSettigns = Seq(
-  addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M5" cross CrossVersion.full),
+  addCompilerPlugin(Library.paradisePlugin),
   scalacOptions += "-Xplugin-require:macroparadise")
 
 lazy val `try-meta` = project

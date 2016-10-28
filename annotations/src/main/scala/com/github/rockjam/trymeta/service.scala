@@ -28,20 +28,22 @@ class service extends StaticAnnotation {
       val q"..$mods object $name { ..${stats: Seq[Stat]} }" = defn
 
       val serviceTrait = {
-        val requests: Seq[Defn.Class] = stats collect {
-          case c: Defn.Class => c
-        }
+        val requests: Seq[MethodDescription] = ServiceCommon.extractRpcRequests(stats)
 
-        val declarations = requests map { req =>
-          val q"..$_ class $tname[..$_] ..$_ (...$paramss) extends $_" = req
-          val methodName = Term.Name(s"handle${tname.value}")
-          q"def $methodName(..${paramss.flatten}): Unit"
+        println(s"=========requests are: ${requests}")
+
+        val declarations = requests map { case MethodDescription(reqType, respType, paramss)=>
+          val methodName = Term.Name(s"handle$reqType") // duplicate
+          q"def $methodName(..${paramss.flatten}): Future[Xor[Error, $respType]]"
         }
 
         val serviceName = Type.Name(name.value + "Service")
 
         q"""
           trait $serviceName {
+            import cats.data.Xor
+            import com.github.rockjam.trymeta.rpc.Rpc._
+            import scala.concurrent.Future
             ..$declarations
           }
         """

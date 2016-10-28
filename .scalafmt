@@ -1,6 +1,13 @@
 style: defaultWithAlign
 danglingParentheses: true
-
+align.openParenCallSite: false
 spaces {
   inImportCurlyBraces: true
 }
+
+rewriteTokens {
+  "->": "→"
+  "=>": "⇒"
+}
+
+rewrite.rules = [SortImports, RedundantBraces]

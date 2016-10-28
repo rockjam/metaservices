@@ -9,11 +9,12 @@ object Version {
 }
 
 object Library {
-  val scalaTest    = "org.scalatest" %% "scalatest"     % Version.ScalaTest
-  val scalameta    = "org.scalameta" %% "scalameta"     % "1.1.0"
-  val circeCore    = "io.circe"      %% "circe-core"    % Version.Circe
-  val circeGeneric = "io.circe"      %% "circe-generic" % Version.Circe
-  val circeParser  = "io.circe"      %% "circe-parser"  % Version.Circe
+  val scalaTest      = "org.scalatest" %% "scalatest"     % Version.ScalaTest
+  val scalameta      = "org.scalameta" %% "scalameta"     % "1.1.0"
+  val circeCore      = "io.circe"      %% "circe-core"    % Version.Circe
+  val circeGeneric   = "io.circe"      %% "circe-generic" % Version.Circe
+  val circeParser    = "io.circe"      %% "circe-parser"  % Version.Circe
+  val paradisePlugin = "org.scalameta" %  "paradise"      % "3.0.0-M5" cross CrossVersion.full
 }
 
 object Dependencies {
