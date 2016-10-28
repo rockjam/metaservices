@@ -19,4 +19,11 @@ package com.github.rockjam.trymeta
 object Utils {
   def lowerize(s: String): String =
     s.headOption map (_.toLower + s.tail) getOrElse s
+
+  def logResult[T](res: T): T = {
+    println("================================>>")
+    println(res)
+    println("<<================================")
+    res
+  }
 }

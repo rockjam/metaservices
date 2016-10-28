@@ -24,92 +24,80 @@ class jsonrpc extends StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
 
     println("============ in jsonrpc")
+
     def aux(defn: Tree) = {
       val q"..$mods object $name { ..${stats: Seq[Stat]} }" = defn
-
       val objectName = name.value
 
-      val imports = {
-        val i = Seq(
-          importer"com.github.rockjam.trymeta.jsonrpc20._",
-          importer"cats.data.Xor",
-          importer"scala.concurrent.Future",
-          importer"io.circe._",
-          importer"io.circe.syntax._",
-          importer"io.circe.generic.semiauto._"
-        )
-        q"import ..$i"
-      }
+      val jsonRpc = {
+        val rpcRequests: Seq[MethodDescription] = ServiceCommon.extractRpcRequests(stats)
 
-      val rpcRequests: Seq[MethodDescription] = ServiceCommon.extractRpcRequests(stats)
+        val handleRequest = {
+          val handleCases =  rpcRequests map { case MethodDescription(reqType, respType, paramss) =>
+            val reqString = reqType.syntax
 
-      println(s"===rpc requests: ${rpcRequests}")
+            val func = {
+              val requestNameLowerized = Utils.lowerize(reqString)
 
-      val handleCases =  rpcRequests map { case MethodDescription(reqType, respType, paramss) =>
-        val reqString = reqType.syntax
-        val caseName = s"${objectName}.${reqString}"
+              val paramName = param"${Term.Name(requestNameLowerized)}"
+              val methodName = Term.Name(s"handle$reqType")
+              val fieldSelects = paramss.flatten map (_.name.value) map { n =>
+                val objectTermName = Term.Name(requestNameLowerized)
+                val fieldTermName = Term.Name(n)
+                arg"$objectTermName.$fieldTermName"
+              }
+              val errorHandle = {
+                val casesnel = Seq(
+                  p"case Xor.Right(res) => Xor.Right(res.asJson(deriveEncoder[$respType]))",
+                  p"case Xor.Left(err) => Xor.Left(JsonRpcError(err.code, err.message, None))" //TODO: provide err.data conversion
+                )
+                q"{ ..case $casesnel }"
+              }
 
-        println(s"=====case name is: ${caseName}")
+              q"($paramName) => service.$methodName(..$fieldSelects).map($errorHandle) "
+            }
 
+            val jsonRpcMethodName = s"${objectName}.${reqString}"
 
-        val methodName = Term.Name(s"handle$reqType")
+            p"""
+              case $jsonRpcMethodName =>
+               json
+                 .as[$reqType](deriveDecoder[$reqType])
+                 .map($func)
+                 .getOrElse(Future.successful(Xor.Left(JsonRpcErrors.InvalidParams)))
+            """
+          }
 
-
-        val lowerizedName = Utils.lowerize(reqString)
-        val name = Term.Name(lowerizedName)
-
-
-
-        // paramStrings
-        val paramsNames = paramss.flatten map (_.name.value)
-        val calls = paramsNames map { n =>
-          val objectTermName = Term.Name(lowerizedName)
-          val fieldTermName = Term.Name(n)
-          arg"$objectTermName.$fieldTermName"
+          q"""
+            def handleRequest: Json => PartialFunction[String, Future[Xor[JsonRpcError, Json]]] = json => { ..case $handleCases }
+          """
         }
 
-
-        val errorHandle = {
-          val casesnel = Seq(
-            p"case Xor.Right(res) => Xor.Right(res.asJson(deriveEncoder[$respType]))",
-            p"case Xor.Left(err) => Xor.Left(JsonRpcError(err.code, err.message, None))" //TODO: provide err.data conversion
+        val imports = {
+          val i = Seq(
+            importer"com.github.rockjam.trymeta.jsonrpc20._",
+            importer"cats.data.Xor",
+            importer"scala.concurrent.Future",
+            importer"io.circe._",
+            importer"io.circe.syntax._",
+            importer"io.circe.generic.semiauto._"
           )
-          q"{ ..case $casesnel }"
+          q"import ..$i"
         }
 
-        val paramName = param"$name"
-        val func = q"($paramName) => service.$methodName(..$calls).map($errorHandle) "
+        val jsonrpcName = Type.Name(objectName + "JsonRpc")
+        val jsonrpcBaseType = ctor"com.github.rockjam.trymeta.jsonrpc20.JsonRpcService"
+        val serviceName = Type.Name(objectName + "Service")
 
-
-        p"""case $caseName =>
-           json
-            .as[$reqType](deriveDecoder[$reqType])
-            .map($func)
-            .getOrElse(Future.successful(Xor.Left(JsonRpcErrors.InvalidParams)))
+        q"""
+          final class $jsonrpcName(service: $serviceName)(implicit ec: scala.concurrent.ExecutionContext) extends $jsonrpcBaseType {
+           $imports
+           $handleRequest
+          }
         """
       }
 
-      val pf = q"{ ..case $handleCases }"
-
-      val handleRequest = q"""
-        def handleRequest: Json => PartialFunction[String, Future[Xor[JsonRpcError, Json]]] = json => $pf
-      """
-
-      val jsonrpcName = Type.Name(objectName + "JsonRpc")
-      val jsonrpcBaseType = ctor"com.github.rockjam.trymeta.jsonrpc20.JsonRpcService"
-
-      val serviceName = Type.Name(objectName + "Service")
-
-      val jsonRpc = q"""
-        final class $jsonrpcName(service: $serviceName)(implicit ec: scala.concurrent.ExecutionContext) extends $jsonrpcBaseType {
-         $imports
-         $handleRequest
-        }
-      """
-
-      val result = q"..$mods object $name { ..$stats; $jsonRpc }"
-      println(s"\n $result \n")
-      result
+      Utils.logResult(q"..$mods object $name { ..$stats; $jsonRpc }")
     }
 
     aux(defn)
