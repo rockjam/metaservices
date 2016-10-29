@@ -39,19 +39,24 @@ class service extends StaticAnnotation {
 
         val serviceName = Type.Name(name.value + "Service")
 
+        val imports = {
+          val i = Seq(
+            importer"cats.data.Xor",
+            importer"com.github.rockjam.trymeta.rpc.Rpc._",
+            importer"scala.concurrent.Future"
+          )
+          q"import ..$i"
+        }
+
         q"""
           trait $serviceName {
-            import cats.data.Xor
-            import com.github.rockjam.trymeta.rpc.Rpc._
-            import scala.concurrent.Future
+            $imports
             ..$declarations
           }
         """
       }
 
-      val result = q"..$mods object $name { ..$stats; $serviceTrait }"
-      println(s"\n $result \n")
-      result
+      Utils.logResult(q"..$mods object $name { ..$stats; $serviceTrait }")
     }
 
     aux(defn)

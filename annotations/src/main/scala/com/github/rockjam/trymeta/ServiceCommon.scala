@@ -40,8 +40,9 @@ object ServiceCommon {
             tpesnel.head
         }
         responseType.headOption map (respType ⇒
-                                       MethodDescription(reqType,
-                                                         respType,
-                                                         paramss))
+                                       MethodDescription(
+                                         reqType,
+                                         respType,
+                                         paramss))
     }).flatten
 }
