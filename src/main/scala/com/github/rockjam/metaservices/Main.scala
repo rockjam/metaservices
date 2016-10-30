@@ -16,9 +16,9 @@
 
 package com.github.rockjam.metaservices
 
-import com.github.rockjam.metaservices.service.impl.{ GroupsServiceImpl, UsersServiceImpl }
-import com.github.rockjam.metaservices.jsonrpc.{ JsonRpc, JsonRpcService }
-import com.github.rockjam.metaservices.service.models.{ Groups, Users }
+import com.github.rockjam.metaservices.service.impl._
+import com.github.rockjam.metaservices.jsonrpc.{ JsonRpc, JsonRpcRequestEnvelope }
+import com.github.rockjam.metaservices.service.models.{ Calculator, Groups, Users }
 
 //object HttpHandler {
 //  import Users.JsonFormatters._ //???wtf??? why should I do it?
@@ -39,27 +39,45 @@ import scala.concurrent.Await
 object Main extends App {
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  private val usersService  = new UsersServiceImpl
-  private val groupsService = new GroupsServiceImpl
+  private val usersService      = new UsersServiceImpl
+  private val groupsService     = new GroupsServiceImpl
+  private val calculatorService = new CalculatorServiceImpl
 
-  private val usersJsonRpc: JsonRpcService  = new Users.UsersJsonRpc(usersService)
-  private val groupsJsonRpc: JsonRpcService = new Groups.GroupsJsonRpc(groupsService)
+  private val usersJsonRpc      = new Users.UsersJsonRpc(usersService)
+  private val groupsJsonRpc     = new Groups.GroupsJsonRpc(groupsService)
+  private val calculatorJsonRpc = new Calculator.CalculatorJsonRpc(calculatorService)
 
   private val jsonRpc = new JsonRpc(
     List(
       usersJsonRpc,
-      groupsJsonRpc
+      groupsJsonRpc,
+      calculatorJsonRpc
     )
   )
 
-  jsonRpc.handle(???)
-
   import io.circe._, io.circe.syntax._, io.circe.generic.auto._
 
-  val req = Groups.FindGroup("some group").asJson
+  val req = JsonRpcRequestEnvelope(
+    Some("123"),
+    "Calculator.Add",
+    Calculator.Add(Some(1), Some(2)).asJson
+  ).asJson
 
-  val result = Await.result(groupsJsonRpc.handleRequest(req)("Groups.FindGroup"), 5 seconds)
+  println(req)
+
+  val result = Await.result(jsonRpc.handle(req), 5 seconds)
+
+  val req1 = JsonRpcRequestEnvelope(
+    Some("123"),
+    "Calculator.AZAZ",
+    Calculator.Add(Some(1), Some(2)).asJson
+  ).asJson
+
+  println(req1)
+
+  val result1 = Await.result(jsonRpc.handle(req1), 5 seconds)
 
   println(result)
+  println(result1)
 
 }

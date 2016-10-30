@@ -25,7 +25,9 @@ final class JsonRpc(services: List[JsonRpcService])(implicit ec: ExecutionContex
 
   private val chain: Json ⇒ PartialFunction[String, Future[JsonRpcError Xor Json]] = { json ⇒
     val errCase: PartialFunction[String, Future[Xor[JsonRpcError, Json]]] = {
-      case _ ⇒ Future.successful(Xor.Left(JsonRpcErrors.MethodNotFound))
+      case s ⇒
+        println(s"Wrong method: $s")
+        Future.successful(Xor.Left(JsonRpcErrors.MethodNotFound))
     }
 
     (services.reverse foldRight errCase) { (el, acc) ⇒

@@ -16,7 +16,11 @@
 
 package com.github.rockjam.metaservices
 
+import cats.data.Xor
+
 package object service {
+  type Result[T <: ServiceResponse] = ServiceError Xor T
+
   trait ServiceRequest[Resp <: ServiceResponse]
   trait ServiceResponse
   case class ServiceError(code: Int, message: String, data: Option[Array[Byte]])
@@ -24,4 +28,8 @@ package object service {
   //TODO: looks ugly
   val ResponseVoidInstance = ResponseVoid()
   case class ResponseVoid() extends ServiceResponse
+
+  object ServiceErrors {
+    val ValidationError = ServiceError(400, "Validation failed", None)
+  }
 }

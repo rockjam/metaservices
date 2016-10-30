@@ -16,7 +16,7 @@
 
 package com.github.rockjam.metaservices
 
-import io.circe.Json
+import io.circe.{ Encoder, Json }
 
 package object jsonrpc {
   case class JsonRpcRequestEnvelope(id: Option[String],
@@ -35,6 +35,21 @@ package object jsonrpc {
     val MethodNotFound = JsonRpcError(-32601, "Method not found")
     val ParseError     = JsonRpcError(-32700, "Parse error")
     val InvalidParams  = JsonRpcError(-32602, "Invalid params")
+  }
+
+  implicit val jsonRpcResponseEnvelopeEncoder = new Encoder[JsonRpcResponseEnvelope] {
+    def apply(a: JsonRpcResponseEnvelope): Json = {
+      import io.circe._, io.circe.syntax._, io.circe.generic.auto._
+      val oneOf = (a.result map ("result" → _)) ++ (a.error map ("error" → _.asJson))
+      JsonObject
+        .fromMap(
+          Map(
+            "id"      → a.id.asJson,
+            "jsonrpc" → a.jsonrpc.asJson
+          ) ++ oneOf
+        )
+        .asJson
+    }
   }
 
 }
