@@ -46,6 +46,9 @@ Service implementation:
 * Allow case object to be `ServiceResponse`
 * All fields in requests/responses should be optional
 * Validate requests on application side with some kind of validation library/generated code(more evil hacks!)
+* Jsonrpc batch processing
+* Complete jsonrpc protocol(correct errors in correct cases)
+* Add protobuf module
 
 ## On validation
 
