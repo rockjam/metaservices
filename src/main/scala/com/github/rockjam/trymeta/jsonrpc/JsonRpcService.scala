@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.rockjam.trymeta.jsonrpc20
+package com.github.rockjam.trymeta.jsonrpc
 
 import cats.data.Xor
 import io.circe.Json

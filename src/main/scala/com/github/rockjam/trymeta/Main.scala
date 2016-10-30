@@ -16,8 +16,9 @@
 
 package com.github.rockjam.trymeta
 
-import com.github.rockjam.trymeta.impl.{ GroupsServiceImpl, UsersServiceImpl }
-import com.github.rockjam.trymeta.jsonrpc20.{ JsonRpcHub, JsonRpcService }
+import com.github.rockjam.trymeta.service.impl.{ GroupsServiceImpl, UsersServiceImpl }
+import com.github.rockjam.trymeta.jsonrpc.{ JsonRpc, JsonRpcService }
+import com.github.rockjam.trymeta.service.models.{ Groups, Users }
 
 //object HttpHandler {
 //  import Users.JsonFormatters._ //???wtf??? why should I do it?
@@ -31,8 +32,6 @@ import com.github.rockjam.trymeta.jsonrpc20.{ JsonRpcHub, JsonRpcService }
 //  Http.server.serve(":8080", endpoint.toServiceAs[???])
 //
 //}
-import com.github.rockjam.trymeta.model.Users
-import com.github.rockjam.trymeta.model.Groups
 
 import scala.concurrent.duration._
 import scala.concurrent.Await
@@ -46,12 +45,14 @@ object Main extends App {
   private val usersJsonRpc: JsonRpcService  = new Users.UsersJsonRpc(usersService)
   private val groupsJsonRpc: JsonRpcService = new Groups.GroupsJsonRpc(groupsService)
 
-  private val jsonRpc = new JsonRpcHub(
+  private val jsonRpc = new JsonRpc(
     List(
       usersJsonRpc,
       groupsJsonRpc
     )
   )
+
+  jsonRpc.handle(???)
 
   import io.circe._, io.circe.syntax._, io.circe.generic.auto._
 

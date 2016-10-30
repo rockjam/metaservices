@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package com.github.rockjam.trymeta.impl
+package com.github.rockjam.trymeta.service
+package impl
 
 import scala.concurrent.{ ExecutionContext, Future }
 import cats.data.Xor
-import com.github.rockjam.trymeta.model.Users._
-import com.github.rockjam.trymeta.rpc._
+import models.Users._
 
 final class UsersServiceImpl(implicit ec: ExecutionContext) extends UsersService {
 
-  override def handleFindUser(query: String): Future[Xor[Rpc.Error, ResponseFindUser]] =
+  override def handleFindUser(query: String): Future[Xor[ServiceError, ResponseFindUser]] =
     Future(List("rockjam", "charliebubbles"))
       .map(_.map(_.toUpperCase))
       .map(res ⇒ Xor.Right(ResponseFindUser(res)))
 
-  override def handleGetName(id: Int): Future[Xor[Rpc.Error, ResponseGetName]] =
+  override def handleGetName(id: Int): Future[Xor[ServiceError, ResponseGetName]] =
     Future.successful(Xor.Right(ResponseGetName("rockjam")))
 
-  override def handleSetName(id: Int, name: String): Future[Xor[Rpc.Error, ResponseSetName]] =
+  override def handleSetName(id: Int, name: String): Future[Xor[ServiceError, ResponseSetName]] =
     Future.successful(Xor.Right(ResponseSetName()))
 
 }

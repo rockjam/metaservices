@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-package com.github.rockjam.trymeta.rpc
+package com.github.rockjam.trymeta
 
-// TODO: think more about naming packages, etc
-object Rpc {
-  case class Error(code: Int, message: String, data: Option[Array[Byte]])
-
-  trait Response
-
-  trait Request[Resp <: Response]
-
+package object service {
+  trait ServiceRequest[Resp <: ServiceResponse]
+  trait ServiceResponse
+  case class ServiceError(code: Int, message: String, data: Option[Array[Byte]])
 }

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.github.rockjam.trymeta.jsonrpc20
+package com.github.rockjam.trymeta.jsonrpc
 
 import cats.data.Xor
 
 import scala.concurrent.{ ExecutionContext, Future }
 
-final class JsonRpcHub(services: List[JsonRpcService])(implicit ec: ExecutionContext) {
+final class JsonRpc(services: List[JsonRpcService])(implicit ec: ExecutionContext) {
   import io.circe._, io.circe.syntax._, io.circe.generic.auto._
 
   private val chain: Json ⇒ PartialFunction[String, Future[JsonRpcError Xor Json]] = { json ⇒

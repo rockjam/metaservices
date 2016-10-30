@@ -19,7 +19,7 @@ package com.github.rockjam.trymeta
 import scala.annotation.StaticAnnotation
 import scala.meta._
 
-class jsonrpc extends StaticAnnotation {
+class generatedJsonrpc extends StaticAnnotation {
 
   inline def apply(defn: Any): Any = meta {
 
@@ -30,10 +30,10 @@ class jsonrpc extends StaticAnnotation {
       val objectName = name.value
 
       val jsonRpc = {
-        val rpcRequests: Seq[MethodDescription] = ServiceCommon.extractRpcRequests(stats)
+        val serviceRequests: Seq[MethodDescription] = ServiceCommon.extractServiceRequests(stats)
 
         val handleRequest = {
-          val handleCases =  rpcRequests map { case MethodDescription(reqType, respType, paramss) =>
+          val handleCases =  serviceRequests map { case MethodDescription(reqType, respType, paramss) =>
             val reqString = reqType.syntax
 
             val func = {
@@ -75,7 +75,7 @@ class jsonrpc extends StaticAnnotation {
 
         val imports = {
           val i = List(
-            importer"com.github.rockjam.trymeta.jsonrpc20._",
+            importer"com.github.rockjam.trymeta.jsonrpc._",
             importer"cats.data.Xor",
             importer"scala.concurrent.Future",
             importer"io.circe._",
@@ -86,7 +86,7 @@ class jsonrpc extends StaticAnnotation {
         }
 
         val jsonrpcName = Type.Name(objectName + "JsonRpc")
-        val jsonrpcBaseType = ctor"com.github.rockjam.trymeta.jsonrpc20.JsonRpcService"
+        val jsonrpcBaseType = ctor"com.github.rockjam.trymeta.jsonrpc.JsonRpcService"
         val serviceName = Type.Name(objectName + "Service")
 
         q"""

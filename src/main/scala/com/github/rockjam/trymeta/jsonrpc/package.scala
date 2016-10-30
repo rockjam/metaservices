@@ -18,7 +18,7 @@ package com.github.rockjam.trymeta
 
 import io.circe.Json
 
-package object jsonrpc20 {
+package object jsonrpc {
   case class JsonRpcRequestEnvelope(id: Option[String],
                                     method: String,
                                     params: Json,

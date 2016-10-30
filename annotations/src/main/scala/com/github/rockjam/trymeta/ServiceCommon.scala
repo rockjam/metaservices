@@ -18,31 +18,22 @@ package com.github.rockjam.trymeta
 
 import scala.meta._
 
-case class MethodDescription(req: Type,
-                             resp: Type,
-                             paramss: Seq[Seq[Term.Param]])
+case class MethodDescription(req: Type, resp: Type, paramss: Seq[Seq[Term.Param]])
 
 object ServiceCommon {
-  def extractRpcRequests(stats: Seq[Stat]): Seq[MethodDescription] =
+  def extractServiceRequests(stats: Seq[Stat]): Seq[MethodDescription] =
     (stats collect {
       case c: Defn.Class ⇒
-        val q"..$_ class $reqType[..$_] ..$_ (...$paramss) extends $template" =
-          c
-        val template"{ ..$_ } with ..$ctorcalls { $_ => ..$_ }" = template
+        val q"..$_ class $reqType[..$_] ..$_ (...$paramss) extends $template" = c
+        val template"{ ..$_ } with ..$ctorcalls { $_ => ..$_ }"               = template
 
-        println(s"===ctorcalls: $ctorcalls")
-
-        val requestsClass = "com.github.rockjam.trymeta.rpc.Rpc.Request"
+        val requestsClass = "com.github.rockjam.trymeta.service.ServiceRequest"
 
         val responseType = (ctorcalls: Seq[Ctor.Call]) flatMap (_.children) collect {
           case q"$expr[..$tpesnel]" ⇒
             requestsClass.endsWith(expr.syntax)
             tpesnel.head
         }
-        responseType.headOption map (respType ⇒
-                                       MethodDescription(
-                                         reqType,
-                                         respType,
-                                         paramss))
+        responseType.headOption map (respType ⇒ MethodDescription(reqType, respType, paramss))
     }).flatten
 }

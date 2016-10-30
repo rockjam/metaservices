@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package com.github.rockjam.trymeta.impl
+package com.github.rockjam.trymeta.service
+package impl
 
 import cats.data.Xor
-import com.github.rockjam.trymeta.model.Groups._
-import com.github.rockjam.trymeta.rpc._
+import models.Groups._
 
 import scala.concurrent.{ ExecutionContext, Future }
 
 final class GroupsServiceImpl(implicit ec: ExecutionContext) extends GroupsService {
 
-  override def handleCreate(id: Int, title: String): Future[Xor[Rpc.Error, CreateAck]] = ???
+  override def handleCreate(id: Int, title: String): Future[Xor[ServiceError, CreateAck]] = ???
 
-  override def handleFindGroup(name: String): Future[Xor[Rpc.Error, FindGroupResponse]] = {
+  override def handleFindGroup(name: String): Future[Xor[ServiceError, FindGroupResponse]] = {
     val groups = List(
       GroupRef(22, Some("title of the group")),
       GroupRef(23, None),
@@ -35,8 +35,9 @@ final class GroupsServiceImpl(implicit ec: ExecutionContext) extends GroupsServi
     Future.successful(Xor.Right(FindGroupResponse(groups)))
   }
 
-  override def handleGetTitle(id: Int): Future[Xor[Rpc.Error, ResponseGetTitle]] = ???
+  override def handleGetTitle(id: Int): Future[Xor[ServiceError, ResponseGetTitle]] = ???
 
-  override def handleSetTitle(id: Int, title: String): Future[Xor[Rpc.Error, ResponseSetTitle]] =
+  override def handleSetTitle(id: Int,
+                              title: String): Future[Xor[ServiceError, ResponseSetTitle]] =
     ???
 }

@@ -19,7 +19,7 @@ package com.github.rockjam.trymeta
 import scala.annotation.StaticAnnotation
 import scala.meta._
 
-class service extends StaticAnnotation {
+class generatedService extends StaticAnnotation {
 
   inline def apply(defn: Any): Any = meta {
 
@@ -28,13 +28,13 @@ class service extends StaticAnnotation {
       val q"..$mods object $name { ..${stats: Seq[Stat]} }" = defn
 
       val serviceTrait = {
-        val requests: Seq[MethodDescription] = ServiceCommon.extractRpcRequests(stats)
+        val serviceRequests: Seq[MethodDescription] = ServiceCommon.extractServiceRequests(stats)
 
-        println(s"=========requests are: ${requests}")
+        println(s"=========serviceRequests are: ${serviceRequests}")
 
-        val declarations = requests map { case MethodDescription(reqType, respType, paramss)=>
+        val declarations = serviceRequests map { case MethodDescription(reqType, respType, paramss)=>
           val methodName = Term.Name(s"handle$reqType") // duplicate
-          q"def $methodName(..${paramss.flatten}): Future[Xor[Error, $respType]]"
+          q"def $methodName(..${paramss.flatten}): Future[Xor[ServiceError, $respType]]"
         }
 
         val serviceName = Type.Name(name.value + "Service")
@@ -42,7 +42,7 @@ class service extends StaticAnnotation {
         val imports = {
           val i = List(
             importer"cats.data.Xor",
-            importer"com.github.rockjam.trymeta.rpc.Rpc._",
+            importer"com.github.rockjam.trymeta.service._",
             importer"scala.concurrent.Future"
           )
           q"import ..$i"
