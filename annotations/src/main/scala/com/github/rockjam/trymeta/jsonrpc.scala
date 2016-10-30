@@ -47,8 +47,8 @@ class jsonrpc extends StaticAnnotation {
                 arg"$objectTermName.$fieldTermName"
               }
               val errorHandle = {
-                val casesnel = Seq(
-                  p"case Xor.Right(res) => Xor.Right(res.asJson(deriveEncoder[$respType]))",
+                val casesnel = List(
+                  p"case Xor.Right(res) => Xor.Right(res.asJson)",
                   p"case Xor.Left(err) => Xor.Left(JsonRpcError(err.code, err.message, None))" //TODO: provide err.data conversion
                 )
                 q"{ ..case $casesnel }"
@@ -62,7 +62,7 @@ class jsonrpc extends StaticAnnotation {
             p"""
               case $jsonRpcMethodName =>
                json
-                 .as[$reqType](deriveDecoder[$reqType])
+                 .as[$reqType]
                  .map($func)
                  .getOrElse(Future.successful(Xor.Left(JsonRpcErrors.InvalidParams)))
             """
@@ -74,13 +74,13 @@ class jsonrpc extends StaticAnnotation {
         }
 
         val imports = {
-          val i = Seq(
+          val i = List(
             importer"com.github.rockjam.trymeta.jsonrpc20._",
             importer"cats.data.Xor",
             importer"scala.concurrent.Future",
             importer"io.circe._",
             importer"io.circe.syntax._",
-            importer"io.circe.generic.semiauto._"
+            importer"io.circe.generic.auto._"
           )
           q"import ..$i"
         }

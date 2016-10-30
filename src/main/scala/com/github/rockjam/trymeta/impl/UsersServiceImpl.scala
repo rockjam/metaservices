@@ -21,22 +21,17 @@ import cats.data.Xor
 import com.github.rockjam.trymeta.model.Users._
 import com.github.rockjam.trymeta.rpc._
 
-final class UsersServiceImpl(implicit ec: ExecutionContext)
-    extends UsersService {
+final class UsersServiceImpl(implicit ec: ExecutionContext) extends UsersService {
 
-  override def handleFindUser(
-      query: String): Future[Xor[Rpc.Error, ResponseFindUser]] =
+  override def handleFindUser(query: String): Future[Xor[Rpc.Error, ResponseFindUser]] =
     Future(List("rockjam", "charliebubbles"))
       .map(_.map(_.toUpperCase))
       .map(res ⇒ Xor.Right(ResponseFindUser(res)))
 
-  override def handleGetName(
-      id: Int): Future[Xor[Rpc.Error, ResponseGetName]] =
+  override def handleGetName(id: Int): Future[Xor[Rpc.Error, ResponseGetName]] =
     Future.successful(Xor.Right(ResponseGetName("rockjam")))
 
-  override def handleSetName(
-      id: Int,
-      name: String): Future[Xor[Rpc.Error, ResponseSetName]] =
+  override def handleSetName(id: Int, name: String): Future[Xor[Rpc.Error, ResponseSetName]] =
     Future.successful(Xor.Right(ResponseSetName()))
 
 }

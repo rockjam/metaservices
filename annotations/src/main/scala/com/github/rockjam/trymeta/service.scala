@@ -40,7 +40,7 @@ class service extends StaticAnnotation {
         val serviceName = Type.Name(name.value + "Service")
 
         val imports = {
-          val i = Seq(
+          val i = List(
             importer"cats.data.Xor",
             importer"com.github.rockjam.trymeta.rpc.Rpc._",
             importer"scala.concurrent.Future"

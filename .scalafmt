@@ -1,4 +1,6 @@
 style: defaultWithAlign
+maxColumn: 100
+continuationIndent.callSite: 2
 danglingParentheses: true
 align.openParenCallSite: false
 spaces {
@@ -10,4 +12,4 @@ rewriteTokens {
   "=>": "⇒"
 }
 
-rewrite.rules = [SortImports, RedundantBraces]
+rewrite.rules = [SortImports, RedundantBraces, PreferCurlyFors]

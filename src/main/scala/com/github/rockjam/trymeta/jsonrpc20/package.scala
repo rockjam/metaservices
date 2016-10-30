@@ -16,27 +16,25 @@
 
 package com.github.rockjam.trymeta
 
-import cats.data.Xor
 import io.circe.Json
 
 package object jsonrpc20 {
-  // maybe make params Json instead??? probably no
   case class JsonRpcRequestEnvelope(id: Option[String],
                                     method: String,
                                     params: Json,
                                     jsonrpc: String = "2.0")
 
-  case class JsonRpcError(code: Int,
-                          message: String,
-                          data: Option[String] = None)
+  case class JsonRpcError(code: Int, message: String, data: Option[String] = None)
 
-  //TODO: write encoder for this. !!! should know encoder for underlying Rpc.Response. Maybe better Json?
   case class JsonRpcResponseEnvelope(id: Option[String],
-                                     res: JsonRpcError Xor Json,
+                                     result: Option[Json],
+                                     error: Option[JsonRpcError],
                                      jsonrpc: String = "2.0")
 
   object JsonRpcErrors {
-    val InvalidParams = JsonRpcError(-32602, "Invalid params")
+    val MethodNotFound = JsonRpcError(-32601, "Method not found")
+    val ParseError     = JsonRpcError(-32700, "Parse error")
+    val InvalidParams  = JsonRpcError(-32602, "Invalid params")
   }
 
 }

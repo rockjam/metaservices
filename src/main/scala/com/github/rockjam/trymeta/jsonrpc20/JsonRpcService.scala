@@ -22,26 +22,5 @@ import io.circe.Json
 import scala.concurrent.Future
 
 trait JsonRpcService {
-  def handleRequest: Json ⇒ PartialFunction[String,
-                                            Future[JsonRpcError Xor Json]]
+  def handleRequest: Json ⇒ PartialFunction[String, Future[JsonRpcError Xor Json]]
 }
-
-//final class JsonRpcHub(services: List[JsonRpcService]) {
-//  import JsonRpc._
-//  import io.circe._, io.circe.parser
-//
-//  private val chain: Json => PartialFunction[String, Future[JsonRpcError Xor Json]] = { json =>
-//    services reduce ((e, a) => e.handleRequest(json).orElse(a.handleRequest(json)))
-//  }
-//
-//  def handle(req: Json): Future[Json] = {
-//    req.as[JsonRpcRequestEnvelope] map { rpcReq =>
-//      //validate rpcReq
-//
-//      val responseBody = chain(rpcReq.params)(rpcReq.method)
-//
-//
-//
-//    }
-//  }
-//}

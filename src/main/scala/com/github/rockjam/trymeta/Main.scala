@@ -16,7 +16,8 @@
 
 package com.github.rockjam.trymeta
 
-import com.github.rockjam.trymeta.impl.UsersServiceImpl
+import com.github.rockjam.trymeta.impl.{ GroupsServiceImpl, UsersServiceImpl }
+import com.github.rockjam.trymeta.jsonrpc20.{ JsonRpcHub, JsonRpcService }
 
 //object HttpHandler {
 //  import Users.JsonFormatters._ //???wtf??? why should I do it?
@@ -30,6 +31,8 @@ import com.github.rockjam.trymeta.impl.UsersServiceImpl
 //  Http.server.serve(":8080", endpoint.toServiceAs[???])
 //
 //}
+import com.github.rockjam.trymeta.model.Users
+import com.github.rockjam.trymeta.model.Groups
 
 import scala.concurrent.duration._
 import scala.concurrent.Await
@@ -37,12 +40,25 @@ import scala.concurrent.Await
 object Main extends App {
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  private val usersService = new UsersServiceImpl
+  private val usersService  = new UsersServiceImpl
+  private val groupsService = new GroupsServiceImpl
 
-  import com.github.rockjam.trymeta.model.Users._
+  private val usersJsonRpc: JsonRpcService  = new Users.UsersJsonRpc(usersService)
+  private val groupsJsonRpc: JsonRpcService = new Groups.GroupsJsonRpc(groupsService)
 
-  private val usersJsonRpc = new UsersJsonRpc(usersService)
+  private val jsonRpc = new JsonRpcHub(
+    List(
+      usersJsonRpc,
+      groupsJsonRpc
+    )
+  )
 
-  val result = Await.result(usersService.handleFindUser("bla"), 5.seconds)
-  println(s"===find user result: ${result}")
+  import io.circe._, io.circe.syntax._, io.circe.generic.auto._
+
+  val req = Groups.FindGroup("some group").asJson
+
+  val result = Await.result(groupsJsonRpc.handleRequest(req)("Groups.FindGroup"), 5 seconds)
+
+  println(result)
+
 }
