@@ -20,4 +20,8 @@ package object service {
   trait ServiceRequest[Resp <: ServiceResponse]
   trait ServiceResponse
   case class ServiceError(code: Int, message: String, data: Option[Array[Byte]])
+
+  //TODO: looks ugly
+  val ResponseVoidInstance = ResponseVoid()
+  case class ResponseVoid() extends ServiceResponse
 }

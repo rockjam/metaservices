@@ -20,7 +20,7 @@ We have model:
 case class ValidateMe(name: Option[String], otherThing: Option[Int])
 ```
 
-In current version of our app, in `ValidateMe` `name` field is required, `otherThing` is optional. `validate` function should not only make validation of modeal, but also provide validated data in a way, user can access it.
+In current version of our app, in `ValidateMe` model, `name` field is required, `otherThing` is optional. `validate` function should not only make validation of model, but also provide validated data in a way, user can access it.
 ```scala
 type ValidationResult[T] = ValidationError Xor T  
 def validate: ValidateMe => ValidationResult[(String, Option[Int])] = { model =>

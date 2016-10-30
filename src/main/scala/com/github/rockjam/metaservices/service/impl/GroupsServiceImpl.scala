@@ -24,7 +24,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 
 final class GroupsServiceImpl(implicit ec: ExecutionContext) extends GroupsService {
 
-  override def handleCreate(id: Int, title: String): Future[Xor[ServiceError, CreateAck]] = ???
+  override def handleCreate(id: Int, title: String): Future[Xor[ServiceError, ResponseVoid]] = ???
 
   override def handleFindGroup(name: String): Future[Xor[ServiceError, FindGroupResponse]] = {
     val groups = List(
@@ -37,7 +37,6 @@ final class GroupsServiceImpl(implicit ec: ExecutionContext) extends GroupsServi
 
   override def handleGetTitle(id: Int): Future[Xor[ServiceError, ResponseGetTitle]] = ???
 
-  override def handleSetTitle(id: Int,
-                              title: String): Future[Xor[ServiceError, ResponseSetTitle]] =
+  override def handleSetTitle(id: Int, title: String): Future[Xor[ServiceError, ResponseVoid]] =
     ???
 }

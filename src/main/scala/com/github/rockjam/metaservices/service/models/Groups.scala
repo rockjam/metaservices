@@ -23,9 +23,7 @@ import com.github.rockjam.metaservices.{ generatedJsonrpc, generatedService }
 @generatedJsonrpc
 object Groups {
 
-  case class Create(id: Int, title: String) extends ServiceRequest[CreateAck]
-
-  case class CreateAck() extends ServiceResponse
+  case class Create(id: Int, title: String) extends ServiceRequest[ResponseVoid]
 
   case class FindGroup(name: String) extends ServiceRequest[FindGroupResponse]
 
@@ -37,8 +35,6 @@ object Groups {
 
   case class ResponseGetTitle(name: String) extends ServiceResponse
 
-  case class SetTitle(id: Int, title: String) extends ServiceRequest[ResponseSetTitle]
-
-  case class ResponseSetTitle() extends ServiceResponse // TODO: make it case object
+  case class SetTitle(id: Int, title: String) extends ServiceRequest[ResponseVoid]
 
 }

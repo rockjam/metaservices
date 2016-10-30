@@ -31,7 +31,7 @@ final class UsersServiceImpl(implicit ec: ExecutionContext) extends UsersService
   override def handleGetName(id: Int): Future[Xor[ServiceError, ResponseGetName]] =
     Future.successful(Xor.Right(ResponseGetName("rockjam")))
 
-  override def handleSetName(id: Int, name: String): Future[Xor[ServiceError, ResponseSetName]] =
-    Future.successful(Xor.Right(ResponseSetName()))
+  override def handleSetName(id: Int, name: String): Future[Xor[ServiceError, ResponseVoid]] =
+    Future.successful(Xor.Right(ResponseVoidInstance))
 
 }

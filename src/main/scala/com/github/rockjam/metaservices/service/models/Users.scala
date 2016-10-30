@@ -27,9 +27,7 @@ object Users {
 
   case class ResponseGetName(name: String) extends ServiceResponse
 
-  case class SetName(id: Int, name: String) extends ServiceRequest[ResponseSetName]
-
-  case class ResponseSetName() extends ServiceResponse // TODO: make it case object
+  case class SetName(id: Int, name: String) extends ServiceRequest[ResponseVoid]
 
   case class FindUser(query: String) extends ServiceRequest[ResponseFindUser]
 
