@@ -20,7 +20,7 @@ import com.github.rockjam.metaservices.util.futureConversions
 import io.finch._
 import io.finch.circe.dropNullKeys._
 import com.twitter.finagle.Http
-import com.twitter.util.{ Await ⇒ TAwait }
+import com.twitter.util.{ Future, Await ⇒ TAwait }
 import io.circe.Json
 
 object Main extends App {
@@ -29,8 +29,13 @@ object Main extends App {
   import scala.concurrent.ExecutionContext.Implicits.global
   private val jsonRpc = Services.init
 
-  val api: Endpoint[Json] = post(body) mapAsync { json ⇒
-    jsonRpc.handle(json).asTwitter
+  // TODO: is there any way to make it without .asTuple?
+  val api: Endpoint[Json] = (headerOption("Content-Type") :: post(body)).asTuple mapAsync {
+    case (ct, requestBody) ⇒
+      ct match {
+        case Some("application/json") ⇒ jsonRpc.handle(requestBody).asTwitter
+        case _                        ⇒ Future.exception(Error("Invalid content type"))
+      }
   }
 
   TAwait.ready(Http.server.serve(":8080", api.toServiceAs[Application.Json]))

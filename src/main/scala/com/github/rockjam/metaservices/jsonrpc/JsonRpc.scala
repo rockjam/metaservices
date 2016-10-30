@@ -35,8 +35,8 @@ final class JsonRpc(services: List[JsonRpcService])(implicit ec: ExecutionContex
     }
   }
 
-  def handle(req: String): Future[Json] =
-    parser.decode[JsonRpcRequestEnvelope](req) map { rpcReq ⇒
+  def handle(requserBody: String): Future[Json] =
+    parser.decode[JsonRpcRequestEnvelope](requserBody) map { rpcReq ⇒
       // TODO: rcpReq validation
       chain(rpcReq.params)(rpcReq.method) map {
         case Xor.Right(json) ⇒ result(rpcReq.id, json)
