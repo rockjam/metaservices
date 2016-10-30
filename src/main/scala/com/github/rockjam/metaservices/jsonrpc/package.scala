@@ -37,19 +37,4 @@ package object jsonrpc {
     val InvalidParams  = JsonRpcError(-32602, "Invalid params")
   }
 
-  implicit val jsonRpcResponseEnvelopeEncoder = new Encoder[JsonRpcResponseEnvelope] {
-    def apply(a: JsonRpcResponseEnvelope): Json = {
-      import io.circe._, io.circe.syntax._, io.circe.generic.auto._
-      val oneOf = (a.result map ("result" → _)) ++ (a.error map ("error" → _.asJson))
-      JsonObject
-        .fromMap(
-          Map(
-            "id"      → a.id.asJson,
-            "jsonrpc" → a.jsonrpc.asJson
-          ) ++ oneOf
-        )
-        .asJson
-    }
-  }
-
 }

@@ -21,7 +21,7 @@ import cats.data.Xor
 import scala.concurrent.{ ExecutionContext, Future }
 
 final class JsonRpc(services: List[JsonRpcService])(implicit ec: ExecutionContext) {
-  import io.circe._, io.circe.syntax._, io.circe.generic.auto._
+  import io.circe._, io.circe.syntax._, io.circe.generic.auto._, io.circe.parser
 
   private val chain: Json ⇒ PartialFunction[String, Future[JsonRpcError Xor Json]] = { json ⇒
     val errCase: PartialFunction[String, Future[Xor[JsonRpcError, Json]]] = {
@@ -35,8 +35,8 @@ final class JsonRpc(services: List[JsonRpcService])(implicit ec: ExecutionContex
     }
   }
 
-  def handle(req: Json): Future[Json] =
-    req.as[JsonRpcRequestEnvelope] map { rpcReq ⇒
+  def handle(req: String): Future[Json] =
+    parser.decode[JsonRpcRequestEnvelope](req) map { rpcReq ⇒
       // TODO: rcpReq validation
       chain(rpcReq.params)(rpcReq.method) map {
         case Xor.Right(json) ⇒ result(rpcReq.id, json)
