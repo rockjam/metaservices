@@ -23,7 +23,7 @@ import models.Calculator._
 import scala.concurrent.Future
 
 class CalculatorServiceImpl extends CalculatorService {
-  def handleAdd(a: Option[Int], b: Option[Int]): Future[Result[IntegerResponse]] = {
+  override def handleAdd(a: Option[Int], b: Option[Int]): Future[Result[IntegerResponse]] = {
     val result = (for {
       av <- a
       bv <- b
@@ -31,7 +31,7 @@ class CalculatorServiceImpl extends CalculatorService {
     Future.successful(result)
   }
 
-  def handleDevide(a: Option[Int], b: Option[Int]): Future[Result[DoubleResponse]] = {
+  override def handleDevide(a: Option[Int], b: Option[Int]): Future[Result[DoubleResponse]] = {
     val result = (for {
       av <- a
       bv <- b
@@ -40,7 +40,7 @@ class CalculatorServiceImpl extends CalculatorService {
     Future.successful(result)
   }
 
-  def handleMultiply(a: Option[Int], b: Option[Int]): Future[Result[IntegerResponse]] = {
+  override def handleMultiply(a: Option[Int], b: Option[Int]): Future[Result[IntegerResponse]] = {
     val result = (for {
       av <- a
       bv <- b
@@ -48,7 +48,7 @@ class CalculatorServiceImpl extends CalculatorService {
     Future.successful(result)
   }
 
-  def handleSubtract(a: Option[Int], b: Option[Int]): Future[Result[IntegerResponse]] = {
+  override def handleSubtract(a: Option[Int], b: Option[Int]): Future[Result[IntegerResponse]] = {
     val result = (for {
       av <- a
       bv <- b

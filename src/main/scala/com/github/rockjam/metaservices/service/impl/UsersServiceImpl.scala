@@ -23,15 +23,15 @@ import models.Users._
 
 final class UsersServiceImpl(implicit ec: ExecutionContext) extends UsersService {
 
-  override def handleFindUser(query: String): Future[Xor[ServiceError, ResponseFindUser]] =
+  override def handleFindUser(query: String): Future[Result[ResponseFindUser]] =
     Future(List("rockjam", "charliebubbles"))
       .map(_.map(_.toUpperCase))
       .map(res ⇒ Xor.Right(ResponseFindUser(res)))
 
-  override def handleGetName(id: Int): Future[Xor[ServiceError, ResponseGetName]] =
+  override def handleGetName(id: Int): Future[Result[ResponseGetName]] =
     Future.successful(Xor.Right(ResponseGetName("rockjam")))
 
-  override def handleSetName(id: Int, name: String): Future[Xor[ServiceError, ResponseVoid]] =
+  override def handleSetName(id: Int, name: String): Future[Result[ResponseVoid]] =
     Future.successful(Xor.Right(ResponseVoidInstance))
 
 }

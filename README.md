@@ -4,7 +4,8 @@ This is experiment of usage [scalameta/paradise](https://github.com/scalameta/pa
 
 # Examples
 
-Check [Groups.scala](src/main/scala/com/github/rockjam/metaservices/service/models/Groups.scala) and [Users.scala](src/main/scala/com/github/rockjam/metaservices/service/models/Users.scala) for service description.
+Check [Groups](src/main/scala/com/github/rockjam/metaservices/service/models/Groups.scala) and [Users](src/main/scala/com/github/rockjam/metaservices/service/models/Users.scala) for service description.
+Check [GroupsServiceImpl](src/main/scala/com/github/rockjam/metaservices/service/impl/GroupsServiceImpl.scala) and [UsersServiceImpl](src/main/scala/com/github/rockjam/metaservices/service/impl/UsersServiceImpl.scala) for service implementations.
 
 # Things to do:
 
