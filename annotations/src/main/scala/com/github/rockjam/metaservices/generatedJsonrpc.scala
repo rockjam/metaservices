@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.rockjam.trymeta
+package com.github.rockjam.metaservices
 
 import scala.annotation.StaticAnnotation
 import scala.meta._
@@ -75,7 +75,7 @@ class generatedJsonrpc extends StaticAnnotation {
 
         val imports = {
           val i = List(
-            importer"com.github.rockjam.trymeta.jsonrpc._",
+            importer"com.github.rockjam.metaservices.jsonrpc._",
             importer"cats.data.Xor",
             importer"scala.concurrent.Future",
             importer"io.circe._",
@@ -86,7 +86,7 @@ class generatedJsonrpc extends StaticAnnotation {
         }
 
         val jsonrpcName = Type.Name(objectName + "JsonRpc")
-        val jsonrpcBaseType = ctor"com.github.rockjam.trymeta.jsonrpc.JsonRpcService"
+        val jsonrpcBaseType = ctor"com.github.rockjam.metaservices.jsonrpc.JsonRpcService"
         val serviceName = Type.Name(objectName + "Service")
 
         q"""

@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package com.github.rockjam.trymeta.jsonrpc
+package com.github.rockjam.metaservices
 
-import cats.data.Xor
-import io.circe.Json
-
-import scala.concurrent.Future
-
-trait JsonRpcService {
-  def handleRequest: Json ⇒ PartialFunction[String, Future[JsonRpcError Xor Json]]
+package object service {
+  trait ServiceRequest[Resp <: ServiceResponse]
+  trait ServiceResponse
+  case class ServiceError(code: Int, message: String, data: Option[Array[Byte]])
 }

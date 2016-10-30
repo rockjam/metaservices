@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.rockjam.trymeta.jsonrpc
+package com.github.rockjam.metaservices.jsonrpc
 
 import cats.data.Xor
 

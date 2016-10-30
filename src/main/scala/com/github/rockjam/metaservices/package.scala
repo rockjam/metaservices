@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package com.github.rockjam.trymeta
+package com.github.rockjam
 
-object Utils {
-  def lowerize(s: String): String =
-    s.headOption map (_.toLower + s.tail) getOrElse s
+package object metaservices {
 
-  def logResult[T](res: T): T = {
-    println("================================>>")
-    println(res)
-    println("<<================================")
-    res
-  }
+  type Traversable[+A] = scala.collection.immutable.Traversable[A]
+  type Iterable[+A]    = scala.collection.immutable.Iterable[A]
+  type Seq[+A]         = scala.collection.immutable.Seq[A]
+  type IndexedSeq[+A]  = scala.collection.immutable.IndexedSeq[A]
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.rockjam.trymeta
+package com.github.rockjam.metaservices
 
 import scala.annotation.StaticAnnotation
 import scala.meta._
@@ -42,7 +42,7 @@ class generatedService extends StaticAnnotation {
         val imports = {
           val i = List(
             importer"cats.data.Xor",
-            importer"com.github.rockjam.trymeta.service._",
+            importer"com.github.rockjam.metaservices.service._",
             importer"scala.concurrent.Future"
           )
           q"import ..$i"

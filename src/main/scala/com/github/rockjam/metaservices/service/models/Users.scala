@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.github.rockjam.trymeta.service
+package com.github.rockjam.metaservices.service
 package models
 
-import com.github.rockjam.trymeta.{ generatedJsonrpc, generatedService }
+import com.github.rockjam.metaservices.{ generatedJsonrpc, generatedService }
 
 @generatedService
 @generatedJsonrpc

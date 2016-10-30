@@ -2,11 +2,11 @@ lazy val metaSettigns = Seq(
   addCompilerPlugin(Library.paradisePlugin),
   scalacOptions += "-Xplugin-require:macroparadise")
 
-lazy val `try-meta` = project
+lazy val metaServices = project
   .in(file("."))
   .enablePlugins(AutomateHeaderPlugin, GitVersioning)
   .settings(metaSettigns)
-  .settings(libraryDependencies ++= Dependencies.tryMeta)
+  .settings(libraryDependencies ++= Dependencies.metaServices)
   .dependsOn(annotations)
 
 lazy val annotations = project
@@ -18,5 +18,5 @@ libraryDependencies ++= Vector(
   Library.scalaTest % "test"
 )
 
-initialCommands := """|import com.github.rockjam.try.meta._
+initialCommands := """|import com.github.rockjam.metaservices._
                       |""".stripMargin

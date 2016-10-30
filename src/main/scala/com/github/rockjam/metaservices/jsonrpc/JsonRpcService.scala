@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package com.github.rockjam
+package com.github.rockjam.metaservices.jsonrpc
 
-package object trymeta {
+import cats.data.Xor
+import io.circe.Json
 
-  type Traversable[+A] = scala.collection.immutable.Traversable[A]
-  type Iterable[+A]    = scala.collection.immutable.Iterable[A]
-  type Seq[+A]         = scala.collection.immutable.Seq[A]
-  type IndexedSeq[+A]  = scala.collection.immutable.IndexedSeq[A]
+import scala.concurrent.Future
+
+trait JsonRpcService {
+  def handleRequest: Json ⇒ PartialFunction[String, Future[JsonRpcError Xor Json]]
 }

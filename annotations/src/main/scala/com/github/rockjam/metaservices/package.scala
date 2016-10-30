@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package com.github.rockjam.trymeta
+package com.github.rockjam
 
-package object service {
-  trait ServiceRequest[Resp <: ServiceResponse]
-  trait ServiceResponse
-  case class ServiceError(code: Int, message: String, data: Option[Array[Byte]])
+package object metaservices {
+
+  type Traversable[+A] = scala.collection.immutable.Traversable[A]
+  type Iterable[+A]    = scala.collection.immutable.Iterable[A]
+  type Seq[+A]         = scala.collection.immutable.Seq[A]
+  val Seq = scala.collection.immutable.Seq
+  type IndexedSeq[+A] = scala.collection.immutable.IndexedSeq[A]
 }

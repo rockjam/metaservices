@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.rockjam.trymeta
+package com.github.rockjam.metaservices
 
 import scala.meta._
 
@@ -27,7 +27,7 @@ object ServiceCommon {
         val q"..$_ class $reqType[..$_] ..$_ (...$paramss) extends $template" = c
         val template"{ ..$_ } with ..$ctorcalls { $_ => ..$_ }"               = template
 
-        val requestsClass = "com.github.rockjam.trymeta.service.ServiceRequest"
+        val requestsClass = "com.github.rockjam.metaservices.service.ServiceRequest"
 
         val responseType = (ctorcalls: Seq[Ctor.Call]) flatMap (_.children) collect {
           case q"$expr[..$tpesnel]" ⇒

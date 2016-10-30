@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.rockjam.trymeta.service
+package com.github.rockjam.metaservices.service
 package impl
 
 import cats.data.Xor

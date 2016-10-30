@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.github.rockjam.trymeta
+package com.github.rockjam.metaservices
 
-import com.github.rockjam.trymeta.service.impl.{ GroupsServiceImpl, UsersServiceImpl }
-import com.github.rockjam.trymeta.jsonrpc.{ JsonRpc, JsonRpcService }
-import com.github.rockjam.trymeta.service.models.{ Groups, Users }
+import com.github.rockjam.metaservices.service.impl.{ GroupsServiceImpl, UsersServiceImpl }
+import com.github.rockjam.metaservices.jsonrpc.{ JsonRpc, JsonRpcService }
+import com.github.rockjam.metaservices.service.models.{ Groups, Users }
 
 //object HttpHandler {
 //  import Users.JsonFormatters._ //???wtf??? why should I do it?

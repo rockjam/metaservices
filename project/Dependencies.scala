@@ -20,6 +20,6 @@ object Library {
 object Dependencies {
   import Library._
 
-  val tryMeta = Seq(circeCore, circeGeneric, circeParser)
+  val metaServices = Seq(circeCore, circeGeneric, circeParser)
   val annotations = Seq(scalameta)
 }
