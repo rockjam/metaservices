@@ -16,7 +16,12 @@ libraryDependencies ++= Vector(
 
 lazy val scalametaSettigns = Seq(
   addCompilerPlugin(Library.paradisePlugin),
-  scalacOptions += "-Xplugin-require:macroparadise")
+  scalacOptions += "-Xplugin-require:macroparadise",
+  resolvers += Resolver.url(
+    "scalameta",
+    url("http://dl.bintray.com/scalameta/maven"))(Resolver.ivyStylePatterns),
+  scalacOptions in (Compile, console) += "-Yrepl-class-based" // necessary to use console
+)
 
 initialCommands := """|import com.github.rockjam.metaservices._
                       |""".stripMargin

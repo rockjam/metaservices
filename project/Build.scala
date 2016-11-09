@@ -19,7 +19,7 @@ object Build extends AutoPlugin {
   override def trigger = allRequirements
 
   override def projectSettings =
-    reformatOnCompileSettings ++
+//    reformatOnCompileSettings ++
     Vector(
       // Core settings
       organization := "com.github.rockjam",
